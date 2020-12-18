@@ -1,0 +1,2 @@
+config global
+	option jd_dir '/opt/jd_scripts'
