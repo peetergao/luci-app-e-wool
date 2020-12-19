@@ -248,18 +248,6 @@ h_run() {
 	fi
 	chmod -R 777 $jd_dir2
 }
-# 定时提取互助码
-j_run() {
-    jd_dir2=$(uci_get_by_type global jd_dir)
-	codes_enable=$(uci_get_by_type global codes_enable)
-    if [ $codes_enable -eq 1 ]; then
-    echo "创建提取互助码计划..." >>$LOG_HTM 2>&1
-    sed -i '/\/usr\/share\/e-wool\/newapp.sh -t/d' /etc/crontabs/root
-	echo "45 23 * * * /usr/share/e-wool/newapp.sh -t &" >>/etc/crontabs/root
-    else
-	sed -i '/\/usr\/share\/e-wool\/newapp.sh -t/d' /etc/crontabs/root
-	fi
-}
 
 #京喜工厂互助码提取
 jxshare_code(){
@@ -453,7 +441,6 @@ while getopts ":abcdsotxyzh" arg; do
 		d_run
 		e_run
 		h_run
-		j_run
 		w_run
         exit 0
         ;;
@@ -464,7 +451,6 @@ while getopts ":abcdsotxyzh" arg; do
 		c_run
 		d_run
 		e_run
-		j_run
 		w_run
         exit 0
         ;;
@@ -486,7 +472,6 @@ while getopts ":abcdsotxyzh" arg; do
     s)
 	    system_time
         e_run
-		j_run
         exit 0
         ;;
 	#提取互助码
