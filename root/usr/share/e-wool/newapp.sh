@@ -254,7 +254,7 @@ j_run() {
     if [ $codes_enable -eq 1 ]; then
     echo "创建提取互助码计划..." >>$LOG_HTM 2>&1
     sed -i '/\/usr\/share\/e-wool\/newapp.sh -t/d' /etc/crontabs/root
-	echo "5 0 * * * /usr/share/e-wool/newapp.sh -t &" >>/etc/crontabs/root
+	echo "45 23 * * * /usr/share/e-wool/newapp.sh -t &" >>/etc/crontabs/root
     else
 	sed -i '/\/usr\/share\/e-wool\/newapp.sh -t/d' /etc/crontabs/root
 	fi
