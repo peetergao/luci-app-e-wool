@@ -224,6 +224,7 @@ e_run() {
 	if [ ! -f "/usr/share/e-wool/codes.sh" ];then
     sed -i '/e-wool\/codes/d' /etc/crontabs/root
 	else
+    sed -i '/e-wool\/codes/d' /etc/crontabs/root
 	echo "3 2 1,10,20 * * /usr/share/e-wool/codes.sh" >>/etc/crontabs/root
 	fi
 }
