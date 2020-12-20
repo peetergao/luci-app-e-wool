@@ -395,7 +395,7 @@ zzshare_code(){
 	for ck in $(uci_get_by_type global cookiebkye); do
 		old=0
 		if test ! -f "$jd_dir2/logs$j/jd_jdzz.log" ; then
-			zzsc="京东赚赚互助码日志文件不存在，请检查是否已经执行过对应脚本"
+			zzsc="东东萌宠日志文件不存在，请检查是否已经执行过对应脚本"
 			echo "cookie$j东东萌宠互助码:"$zzsc >> $LOG_HTM 2>&1
 		else
 			zzsc=`sed -n '/您的京东赚赚好友助力码为.*/'p $jd_dir2/logs$j/jd_jdzz.log | awk '{print $5}' | sed -n '1p'`
@@ -406,9 +406,9 @@ zzshare_code(){
 					fi
 				done
 				if test $old -eq 0 ; then
-					uci_set_by_type global jdzz_sharecode $petsc
+					uci_set_by_type global jdzz_sharecode $zzsc
 				fi
-				echo "cookie$j京东赚赚互助码:"$zzsc >> $LOG_HTM 2>&1
+				echo "cookie$j京东赚赚好友助力码:"$zzsc >> $LOG_HTM 2>&1
 			fi
 		fi
 		let j++

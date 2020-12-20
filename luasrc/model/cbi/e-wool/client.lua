@@ -68,7 +68,7 @@ o.description = translate("<br/>请到脚本根目录下的: log/jd_dreamFactory
 
 o= s:option(DynamicList, "jdzz_sharecode", translate("京东赚赚互助码"))
 o.rmempty = false
-o.description = translate("<br/>请到脚本根目录下的: log/jd_jdzz.logy 查看日志文件,可以找到你的助力码")
+o.description = translate("<br/>请到脚本根目录下的: log/jd_jdzz.log 查看日志文件,可以找到你的助力码")
 
 o= s:option(DynamicList, "diyhz", translate("定义docker-compose参数"))
 o.rmempty = false
