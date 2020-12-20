@@ -118,7 +118,7 @@ services:
           limits:
             memory: $men
       extra_hosts:
-      - "api.turinglabs.net:127.0.0.1"
+        - "api.turinglabs.net:127.0.0.1"
       container_name: $jd_cname$j
       restart: always
       network_mode: "host"
@@ -170,7 +170,9 @@ services:
 	echo "追加模式" >>$LOG_HTM 2>&1
 	fi
 	if [ $pd_zl -eq 1 ]; then
+	echo "开启屏蔽助力模式..." >>$LOG_HTM 2>&1
 	else
+	echo "未开启屏蔽助力模式..." >>$LOG_HTM 2>&1
 	sed -i '/extra_hosts/ s/^/#/g' $jd_dir2/docker-compose.yml
 	sed -i '/127.0.0.1/ s/^/#/g' $jd_dir2/docker-compose.yml
 	fi
