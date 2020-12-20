@@ -55,6 +55,9 @@ run() {
 	echo "未设置cookies 请先配置好cookies 请先配置好cookies 请先配置好cookies 再进行初始化" >>$LOG_HTM && exit 1
     else
     echo "Cookies已配置 开始执行..." >>$LOG_HTM 2>&1
+	echo "注：Cookies 中不能带有空格哦" >>$LOG_HTM 2>&1
+	echo "注：Cookies 中不能带有空格哦" >>$LOG_HTM 2>&1
+	echo "注：Cookies 中不能带有空格哦" >>$LOG_HTM 2>&1
     fi
 }
 
@@ -92,6 +95,7 @@ b_run() {
 	men=$(uci_get_by_type global cont_men 256M)
 	jd_cname=$(uci_get_by_type global jd_cname jd_scripts)
 	cron_model=$(uci_get_by_type global cron_model)
+	pd_zl=$(uci_get_by_type global pd_zl)
     echo "配置脚本参数..." >>$LOG_HTM 2>&1	
 	if [ ! -d $jd_dir2 ]; then
 	#场地没被收购 赶紧拿下
@@ -113,6 +117,8 @@ services:
         resources:
           limits:
             memory: $men
+      extra_hosts:
+      - "api.turinglabs.net:127.0.0.1"
       container_name: $jd_cname$j
       restart: always
       network_mode: "host"
@@ -162,6 +168,11 @@ services:
 	sed -i 's/# - CUSTOM_LIST_MERGE_TYPE=overwrite/- CUSTOM_LIST_MERGE_TYPE=overwrite/g' $jd_dir2/docker-compose.yml
 	else
 	echo "追加模式" >>$LOG_HTM 2>&1
+	fi
+	if [ $pd_zl -eq 1 ]; then
+	else
+	sed -i '/extra_hosts/ s/^/#/g' $jd_dir2/docker-compose.yml
+	sed -i '/127.0.0.1/ s/^/#/g' $jd_dir2/docker-compose.yml
 	fi
 }
 
