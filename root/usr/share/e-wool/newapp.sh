@@ -52,9 +52,9 @@ cancel() {
 run() {
     cookies=$(uci_get_by_type global cookiebkye)
 	if [ ! -n "$cookies" ]; then
-	echo "任务已完成 未设置cookies 请先配置好cookies 请先配置好cookies 请先配置好cookies 再进行初始化" >>$LOG_HTM && exit 1
+	echo "未设置cookies 请先配置好cookies 请先配置好cookies 请先配置好cookies 再进行初始化" >>$LOG_HTM && exit 1
     else
-    echo "cookies已配置正在初始化..." >>$LOG_HTM 2>&1
+    echo "Cookies已配置 开始执行..." >>$LOG_HTM 2>&1
     fi
 }
 
@@ -98,6 +98,8 @@ b_run() {
     mkdir $jd_dir2
 	chmod -R 777 $jd_dir2
 	fi
+# Cookies处理
+	
 	cat <<-EOF > $jd_dir2/docker-compose.yml
 version: "3.7"
 services:
@@ -227,6 +229,18 @@ e_run() {
     sed -i '/e-wool\/codes/d' /etc/crontabs/root
 	echo "3 2 1,10,20 * * /usr/share/e-wool/codes.sh" >>/etc/crontabs/root
 	fi
+}
+
+# 处理cookies空格
+ck_run() {
+	grep "list cookiebkye" /etc/config/e-wool >/tmp/cookies.log
+	sed -i "s/	list cookiebkye //g" /tmp/cookies.log
+	sed -i s/[[:space:]]//g /tmp/cookies.log
+	sed -i 's/^/	list cookiebkye &/g' /tmp/cookies.log
+	sed -i '/list cookiebkye/d' /etc/config/e-wool
+    chmod -R 777 /etc/config/e-wool
+	cat /tmp/cookies.log >> /etc/config/e-wool
+	rm -rf /tmp/cookies.log
 }
 
 # 替换计划任务
@@ -501,6 +515,7 @@ while getopts ":abcdsotxyzh" arg; do
     s)
 	    system_time
         e_run
+		ck_run
         exit 0
         ;;
 	#提取互助码
