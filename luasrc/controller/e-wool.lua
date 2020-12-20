@@ -41,7 +41,5 @@ function run()
         luci.sys.call("/usr/share/e-wool/newapp.sh -d &")
 	elseif up_code == "up_client" then
         luci.sys.call("/usr/share/e-wool/update_client.sh &")
-	elseif up_code == "up_scode" then
-        luci.sys.call("/usr/share/e-wool/create_share_codes.sh &")
 	end
 end

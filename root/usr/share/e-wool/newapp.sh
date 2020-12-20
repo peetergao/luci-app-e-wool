@@ -388,6 +388,34 @@ petshare_code(){
 
 }
 
+#京东赚赚互助码提取
+zzshare_code(){
+	jd_dir2=$(uci_get_by_type global jd_dir)
+	j=1
+	for ck in $(uci_get_by_type global cookiebkye); do
+		old=0
+		if test ! -f "$jd_dir2/logs$j/jd_jdzz.log" ; then
+			zzsc="京东赚赚互助码日志文件不存在，请检查是否已经执行过对应脚本"
+			echo "cookie$j东东萌宠互助码:"$zzsc >> $LOG_HTM 2>&1
+		else
+			zzsc=`sed -n '/您的京东赚赚好友助力码为.*/'p $jd_dir2/logs$j/jd_jdzz.log | awk '{print $5}' | sed -n '1p'`
+			if test -n "$zzsc" ; then
+				for sc in $(uci_get_by_type global jdzz_sharecode); do
+					if test "$zzsc" == "$sc" ; then
+						old=1
+					fi
+				done
+				if test $old -eq 0 ; then
+					uci_set_by_type global jdzz_sharecode $petsc
+				fi
+				echo "cookie$j京东赚赚互助码:"$zzsc >> $LOG_HTM 2>&1
+			fi
+		fi
+		let j++
+	done
+
+}
+
 # 开始运营
 w_run() {
     echo "启动容器..." >>$LOG_HTM 2>&1

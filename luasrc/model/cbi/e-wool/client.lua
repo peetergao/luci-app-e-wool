@@ -66,6 +66,10 @@ o= s:option(DynamicList, "jxgc_sharecode", translate("京喜工厂互助码"))
 o.rmempty = false
 o.description = translate("<br/>请到脚本根目录下的: log/jd_dreamFactory 查看日志文件,可以找到你的助力码")
 
+o= s:option(DynamicList, "jdzz_sharecode", translate("京东赚赚互助码"))
+o.rmempty = false
+o.description = translate("<br/>请到脚本根目录下的: log/jd_jdzz.logy 查看日志文件,可以找到你的助力码")
+
 o= s:option(DynamicList, "diyhz", translate("定义docker-compose参数"))
 o.rmempty = false
 o.description = translate("<br/>自定义docker-compose.yml各项参数<br/>比如：<br/>MARKET_COIN_TO_BEANS=1000<br/>MARKET_COIN_TO_BEANS=抽纸<br/>能力限制，所以参数内不能出现空格和特殊字符<br/>变量合集：https://github.com/lxk0301/jd_scripts/blob/master/githubAction.md")
