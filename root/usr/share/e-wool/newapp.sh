@@ -276,6 +276,21 @@ h_run() {
 	chmod -R 777 $jd_dir2
 }
 
+send_run() {
+	jd_cname=$(uci_get_by_type global jd_cname jd_scripts)
+	sendchange_enable==$(uci_get_by_type global sendchange_enable)
+	if [ $sendchange_enable -eq 1 ]; then
+	echo "已开启server酱替换为酷推" >>$LOG_HTM 2>&1
+	j=1
+	for ck in $(uci_get_by_type global cookiebkye); do
+	docker exec $jd_cname$j sed -i '/sc.ftqq.com\/\${SCKEY}/ s/^/\/\//g' /scripts/sendNotify.js
+	docker exec $jd_cname$j sed -i '/text=\${text}\&desp=\${desp}/ s/^/\/\//g' /scripts/sendNotify.js
+	docker exec $jd_cname$j sed -i '/sc.ftqq.com\/\${SCKEY}/a\        url: \`https:\/\/push.xuthus.cc\/send\/\${SCKEY}\`,' /scripts/sendNotify.js
+	docker exec $jd_cname$j sed -i '/text=\${text}\&desp=\${desp}/a\        body: \`c=\${text}\\n\${desp}\`,' /scripts/sendNotify.js
+		let j++
+	done
+	fi
+}
 #京喜工厂互助码提取
 jxshare_code(){
 	jd_dir2=$(uci_get_by_type global jd_dir)
@@ -497,6 +512,7 @@ while getopts ":abcdsotxyzh" arg; do
 		d_run
 		e_run
 		h_run
+		send_run
 		w_run
         exit 0
         ;;
@@ -507,6 +523,7 @@ while getopts ":abcdsotxyzh" arg; do
 		c_run
 		d_run
 		e_run
+		send_run
 		w_run
         exit 0
         ;;
@@ -529,6 +546,7 @@ while getopts ":abcdsotxyzh" arg; do
 	    system_time
         e_run
 		ck_run
+		send_run
         exit 0
         ;;
 	#提取互助码

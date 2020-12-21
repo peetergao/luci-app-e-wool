@@ -95,6 +95,11 @@ o = s:option(Value, "useragent", translate("定义User-Agent"))
 o.rmempty = true
 o.description = translate("<br/>自定义京东系列脚本的UserAgent，不懂不知不会UserAgent的请不要随意填写内容")
 
+o = s:option(Flag, "sendchange_enable", translate("Server酱替换为酷推"))
+o.rmempty = false
+o.default = 0
+o.description = translate("<br/>酷推地址：https://cp.xuthus.cc/ <br/>注：把酷推的Skey填到Server酱 SCKEY位置即可")
+
 o = s:option(Value, "serverchan", translate("Server酱 SCKEY"))
 o.rmempty = true
 o.description = translate("<br/>微信推送，基于Server酱服务<br/>教程： http://sc.ftqq.com/ 绑定并获取 SCKEY")
