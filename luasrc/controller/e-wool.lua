@@ -8,7 +8,6 @@ function index()
     
     entry({"admin", "services", "e-wool"}, alias("admin", "services", "e-wool", "client"), _("JD_ZYZL"), 10).dependent = true -- 首页
     entry({"admin", "services", "e-wool", "client"}, cbi("e-wool/client"),_("Client"), 10).leaf = true -- 基本设置
-	entry({"admin", "services", "e-wool", "client2"}, cbi("e-wool/client2"),_("手执脚本"), 25).leaf = true -- 基本设置
     entry({"admin", "services", "e-wool", "log"},form("e-wool/log"),_("Log"), 60).leaf = true -- 日志页面
     entry({"admin", "services", "e-wool", "script"},form("e-wool/script"),_("参数配置"), 20).leaf = true -- 直接配置脚本
 	entry({"admin", "services", "e-wool", "script2"},form("e-wool/script2"),_("自定任务"), 30).leaf = true -- 直接配置脚本
