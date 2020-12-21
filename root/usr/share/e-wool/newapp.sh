@@ -278,7 +278,7 @@ h_run() {
 
 send_run() {
 	jd_cname=$(uci_get_by_type global jd_cname jd_scripts)
-	sendchange_enable==$(uci_get_by_type global sendchange_enable)
+	sendchange_enable=$(uci_get_by_type global sendchange_enable)
 	if [ $sendchange_enable -eq 1 ]; then
 	echo "已开启server酱替换为酷推" >>$LOG_HTM 2>&1
 	j=1
