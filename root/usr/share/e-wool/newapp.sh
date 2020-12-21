@@ -96,14 +96,23 @@ b_run() {
 	jd_cname=$(uci_get_by_type global jd_cname jd_scripts)
 	cron_model=$(uci_get_by_type global cron_model)
 	pd_zl=$(uci_get_by_type global pd_zl)
+	qq_skey=$(uci_get_by_type global qq_skey)
+	qq_mode=$(uci_get_by_type global qq_mode)
     echo "配置脚本参数..." >>$LOG_HTM 2>&1	
 	if [ ! -d $jd_dir2 ]; then
 	#场地没被收购 赶紧拿下
     mkdir $jd_dir2
 	chmod -R 777 $jd_dir2
 	fi
-# Cookies处理
-	
+# 配置酷推推送模式
+    if [ $qq_mode -eq 0 ]; then
+	qmode=send
+	elif [ $qq_mode -eq 1 ]; then
+	qmode=group
+	elif [ $qq_mode -eq 2 ]; then
+	qmode=wx
+	fi
+# 配置yml
 	cat <<-EOF > $jd_dir2/docker-compose.yml
 version: "3.7"
 services:
@@ -140,6 +149,9 @@ services:
         #telegram机器人通知
         - TG_BOT_TOKEN=$tg_token
         - TG_USER_ID=$tg_id
+        #酷推推送
+        - QQ_MODE=$qmode
+        - QQ_SKEY=$qq_skey
         #通知形式
         - JD_BEAN_SIGN_NOTIFY_SIMPLE=
         #自定义此库里京东系列脚本的UserAgent，不懂不知不会UserAgent的请不要随意填写内容。
@@ -164,10 +176,10 @@ services:
 	fi
 	if [ $cron_model -eq 1 ]; then
     echo "判断计划任务运行模式..." >>$LOG_HTM 2>&1
-	echo "覆盖模式" >>$LOG_HTM 2>&1
+	echo "当前模式：覆盖模式" >>$LOG_HTM 2>&1
 	sed -i 's/# - CUSTOM_LIST_MERGE_TYPE=overwrite/- CUSTOM_LIST_MERGE_TYPE=overwrite/g' $jd_dir2/docker-compose.yml
 	else
-	echo "追加模式" >>$LOG_HTM 2>&1
+	echo "当前模式：追加模式" >>$LOG_HTM 2>&1
 	fi
 	if [ $pd_zl -eq 1 ]; then
 	echo "开启屏蔽助力模式..." >>$LOG_HTM 2>&1
@@ -276,21 +288,6 @@ h_run() {
 	chmod -R 777 $jd_dir2
 }
 
-send_run() {
-	jd_cname=$(uci_get_by_type global jd_cname jd_scripts)
-	sendchange_enable=$(uci_get_by_type global sendchange_enable)
-	if [ $sendchange_enable -eq 1 ]; then
-	echo "已开启server酱替换为酷推" >>$LOG_HTM 2>&1
-	j=1
-	for ck in $(uci_get_by_type global cookiebkye); do
-	docker exec $jd_cname$j sed -i 's/https:\/\/sc.ftqq.com\/\${SCKEY}.send/https:\/\/push.xuthus.cc\/send\/\${SCKEY}/g' /scripts/sendNotify.js
-	docker exec $jd_cname$j sed -i 's/text=\${text}\&desp=\${desp}/c=\${text}\\n\${desp}/g' /scripts/sendNotify.js
-	docker exec $jd_cname$j sed -i 's/\[\\n\\r\]/\%/g' /scripts/sendNotify.js
-	docker exec $jd_cname$j sed -i 's/\\n\\n//g' /scripts/sendNotify.js
-		let j++
-	done
-	fi
-}
 #京喜工厂互助码提取
 jxshare_code(){
 	jd_dir2=$(uci_get_by_type global jd_dir)
@@ -512,7 +509,6 @@ while getopts ":abcdsotxyzh" arg; do
 		d_run
 		e_run
 		h_run
-		send_run
 		w_run
         exit 0
         ;;
@@ -523,7 +519,6 @@ while getopts ":abcdsotxyzh" arg; do
 		c_run
 		d_run
 		e_run
-		send_run
 		w_run
         exit 0
         ;;
@@ -545,8 +540,7 @@ while getopts ":abcdsotxyzh" arg; do
     s)
 	    system_time
         e_run
-		ck_run
-		send_run
+		ck_run-
         exit 0
         ;;
 	#提取互助码

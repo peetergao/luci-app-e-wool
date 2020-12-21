@@ -95,10 +95,15 @@ o = s:option(Value, "useragent", translate("定义User-Agent"))
 o.rmempty = true
 o.description = translate("<br/>自定义京东系列脚本的UserAgent，不懂不知不会UserAgent的请不要随意填写内容")
 
-o = s:option(Flag, "sendchange_enable", translate("Server酱替换为酷推"))
-o.rmempty = false
+o = s:option(ListValue, "qq_mode", translate("酷推通知形式"))
 o.default = 0
-o.description = translate("<br/>酷推地址：https://cp.xuthus.cc/ <br/>注：把酷推的Skey填到Server酱 SCKEY位置即可<br/>如需换回Server酱，请初始化容器")
+o.rmempty = false
+o:value(0, translate("扣扣私推"))
+o:value(1, translate("扣扣群推"))
+o:value(2, translate("微信推送"))
+o = s:option(Value, "qq_skey", translate("酷推 SKEY"))
+o.rmempty = true
+o.description = translate("<br/>推送方式(send或group或者wx，默认send)<br/>教程： https://cp.xuthus.cc/ 绑定并获取Skey")
 
 o = s:option(Value, "serverchan", translate("Server酱 SCKEY"))
 o.rmempty = true
