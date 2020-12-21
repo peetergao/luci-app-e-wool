@@ -285,6 +285,8 @@ send_run() {
 	for ck in $(uci_get_by_type global cookiebkye); do
 	docker exec $jd_cname$j sed -i 's/https:\/\/sc.ftqq.com\/\${SCKEY}.send/https:\/\/push.xuthus.cc\/send\/\${SCKEY}/g' /scripts/sendNotify.js
 	docker exec $jd_cname$j sed -i 's/text=\${text}\&desp=\${desp}/c=\${text}\\n\${desp}/g' /scripts/sendNotify.js
+	docker exec $jd_cname$j sed -i 's/\[\\n\\r\]/\%/g' /scripts/sendNotify.js
+	docker exec $jd_cname$j sed -i 's/\\n\\n//g' /scripts/sendNotify.js
 		let j++
 	done
 	fi
