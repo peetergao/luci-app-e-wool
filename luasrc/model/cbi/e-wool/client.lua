@@ -98,7 +98,7 @@ o.description = translate("<br/>自定义京东系列脚本的UserAgent，不懂
 o = s:option(Flag, "sendchange_enable", translate("Server酱替换为酷推"))
 o.rmempty = false
 o.default = 0
-o.description = translate("<br/>酷推地址：https://cp.xuthus.cc/ <br/>注：把酷推的Skey填到Server酱 SCKEY位置即可")
+o.description = translate("<br/>酷推地址：https://cp.xuthus.cc/ <br/>注：把酷推的Skey填到Server酱 SCKEY位置即可<br/>如需换回Server酱，请初始化容器")
 
 o = s:option(Value, "serverchan", translate("Server酱 SCKEY"))
 o.rmempty = true
