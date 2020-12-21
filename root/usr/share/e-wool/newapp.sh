@@ -283,10 +283,8 @@ send_run() {
 	echo "已开启server酱替换为酷推" >>$LOG_HTM 2>&1
 	j=1
 	for ck in $(uci_get_by_type global cookiebkye); do
-	docker exec $jd_cname$j sed -i '/sc.ftqq.com\/\${SCKEY}/ s/^/\/\//g' /scripts/sendNotify.js
-	docker exec $jd_cname$j sed -i '/text=\${text}\&desp=\${desp}/ s/^/\/\//g' /scripts/sendNotify.js
-	docker exec $jd_cname$j sed -i '/sc.ftqq.com\/\${SCKEY}/a\        url: \`https:\/\/push.xuthus.cc\/send\/\${SCKEY}\`,' /scripts/sendNotify.js
-	docker exec $jd_cname$j sed -i '/text=\${text}\&desp=\${desp}/a\        body: \`c=\${text}\\n\${desp}\`,' /scripts/sendNotify.js
+	docker exec $jd_cname$j sed -i 's/https:\/\/sc.ftqq.com\/\${SCKEY}.send/https:\/\/push.xuthus.cc\/send\/\${SCKEY}/g' /scripts/sendNotify.js
+	docker exec $jd_cname$j sed -i 's/text=\${text}\&desp=\${desp}/c=\${text}\\n\${desp}/g' /scripts/sendNotify.js
 		let j++
 	done
 	fi
