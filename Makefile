@@ -7,8 +7,8 @@
 include $(TOPDIR)/rules.mk
 PKG_NAME:=luci-app-e-wool
 LUCI_PKGARCH:=all
-PKG_VERSION:=bate3
-PKG_RELEASE:=20201220
+PKG_VERSION:=bate9
+PKG_RELEASE:=20201221
 
 include $(INCLUDE_DIR)/package.mk
 
