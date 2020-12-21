@@ -290,10 +290,13 @@ h_run() {
 
 # 手动执行脚本
 sd_run() {
-    echo "开始执行任务..." >>$LOG_HTM 2>&1
     jd_dir2=$(uci_get_by_type global jd_dir)
 	jd_cname=$(uci_get_by_type global jd_cname jd_scripts)
 	sh=$(uci_get_by_type global sd_run)
+	if [ ! -n "$cookies" ]; then
+	echo "哼" >>$LOG_HTM 2>&1
+	else
+    echo "开始执行任务..." >>$LOG_HTM 2>&1
     echo "本次执行脚本：$sh" >>$LOG_HTM 2>&1
 	j=1
 	for ck in $(uci_get_by_type global cookiebkye); do
@@ -301,6 +304,7 @@ sd_run() {
 		let j++
 	done
 	sed -i '/option sd_run/d' /etc/config/e-wool
+	fi
 }
 
 #京喜工厂互助码提取
@@ -557,7 +561,6 @@ while getopts ":abcdsotxyzh" arg; do
         e_run
 		ck_run
 		sd_run
-		echo "任务已完成" >>$LOG_HTM 2>&1
         exit 0
         ;;
 	#提取互助码
