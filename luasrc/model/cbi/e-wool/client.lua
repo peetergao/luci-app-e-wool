@@ -118,6 +118,10 @@ o = s:option(Value, "tg_id", translate("TG_USER_ID"))
 o.rmempty = true
 o.description = translate("<br/>Telegram 推送，如需使用，TG_BOT_TOKEN和TG_USER_ID必须同时赋值<br/>教程：https://github.com/lxk0301/jd_scripts/blob/master/backUp/TG_PUSH.md")
 
+o = s:option(Value, "sd_run", translate("输入脚本名称"))
+o.rmempty = true
+o.description = translate("<br/>说明：<br/>1、填入需要执行的脚本名称，如京豆变动通知脚本：jd_bean_change.js<br/>2、点击 保存&应用 即可<br/>3、保存后会一直处于配置正在应用更改，直到脚本执行完成<br/>4、按cookies顺序执行，没有并发<br/>5、执行完成，可以在日志查看执行情况")
+
 o = s:option(DummyValue, "", "")
 o.rawhtml = true
 o.template = "e-wool/update_service"
