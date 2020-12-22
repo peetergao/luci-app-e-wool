@@ -300,7 +300,6 @@ sd_run() {
 	docker exec $jd_cname$j node /scripts/$sh >>$LOG_HTM 2>&1
 		let j++
 	done
-	fi
 	sed -i '/option sd_run/d' /etc/config/e-wool
 }
 
