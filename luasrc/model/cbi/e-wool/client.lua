@@ -120,7 +120,7 @@ o.description = translate("<br/>Telegram 推送，如需使用，TG_BOT_TOKEN和
 
 o = s:option(Value, "sd_run", translate("手动执行脚本"))
 o.rmempty = true
-o.description = translate("<br/>1、填入需要执行的脚本名称，如京豆变动通知脚本：jd_bean_change.js<br/>2、点击 保存&应用 即可")
+o.description = translate("<br/>1、填入需要执行的脚本名称，如京豆变动通知脚本：jd_bean_change.js<br/>2、点击 保存&应用 即可<br/>3、脚本会按照容器顺序执行，没有并发<br/>4、保存后会一直显示配置应用中，直到脚本运行完成<br/>5、完成后可在日志查看运行后log")
 
 o = s:option(DummyValue, "", "")
 o.rawhtml = true
