@@ -293,9 +293,6 @@ sd_run() {
     jd_dir2=$(uci_get_by_type global jd_dir)
 	jd_cname=$(uci_get_by_type global jd_cname jd_scripts)
 	sh=$(uci_get_by_type global sd_run)
-	if [ ! -n "$cookies" ]; then
-	echo "哼" >>$LOG_HTM 2>&1
-	else
     echo "开始执行任务..." >>$LOG_HTM 2>&1
     echo "本次执行脚本：$sh" >>$LOG_HTM 2>&1
 	j=1
@@ -303,8 +300,8 @@ sd_run() {
 	docker exec $jd_cname$j node /scripts/$sh >>$LOG_HTM 2>&1
 		let j++
 	done
-	sed -i '/option sd_run/d' /etc/config/e-wool
 	fi
+	sed -i '/option sd_run/d' /etc/config/e-wool
 }
 
 #京喜工厂互助码提取
