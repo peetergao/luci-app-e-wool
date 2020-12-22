@@ -95,7 +95,6 @@ b_run() {
 	men=$(uci_get_by_type global cont_men 256M)
 	jd_cname=$(uci_get_by_type global jd_cname jd_scripts)
 	cron_model=$(uci_get_by_type global cron_model)
-	pd_zl=$(uci_get_by_type global pd_zl)
 	qq_skey=$(uci_get_by_type global qq_skey)
 	qq_mode=$(uci_get_by_type global qq_mode)
     echo "配置脚本参数..." >>$LOG_HTM 2>&1	
@@ -126,8 +125,6 @@ services:
         resources:
           limits:
             memory: $men
-      extra_hosts:
-        - "api.turinglabs.net:127.0.0.1"
       container_name: $jd_cname$j
       restart: always
       network_mode: "host"
@@ -158,6 +155,18 @@ services:
         - JD_USER_AGENT=$ua
         #自定义签到延迟
         - JD_BEAN_STOP=$wait
+        #东东农场互助码
+        - FRUITSHARECODES=$(uci_get_by_type global fruitsharecodes)
+        #东东萌宠互助码
+        - PETSHARECODES=$(uci_get_by_type global petsharecodes)
+        #种豆得豆互助码
+        - PLANT_BEAN_SHARECODES=$(uci_get_by_type global plant_bean_sharecodes)
+        #东东工厂互助码
+        - DDFACTORY_SHARECODES=$(uci_get_by_type global ddfactory_sharecodes)
+        #京喜工厂互助码
+        - DREAM_FACTORY_SHARE_CODES=$(uci_get_by_type global dream_factory_share_codes)
+        #京东赚赚
+        - JDZZ_SHARECODES=$(uci_get_by_type global jdzz_sharecodes)
         #自定义参数
         #如果使用自定义定时任务,取消下面一行的注释
         - CUSTOM_LIST_FILE=my_crontab_list.sh
@@ -180,13 +189,6 @@ services:
 	sed -i 's/# - CUSTOM_LIST_MERGE_TYPE=overwrite/- CUSTOM_LIST_MERGE_TYPE=overwrite/g' $jd_dir2/docker-compose.yml
 	else
 	echo "当前模式：追加模式" >>$LOG_HTM 2>&1
-	fi
-	if [ $pd_zl -eq 1 ]; then
-	echo "开启屏蔽助力模式..." >>$LOG_HTM 2>&1
-	else
-	echo "未开启屏蔽助力模式..." >>$LOG_HTM 2>&1
-	sed -i '/extra_hosts/ s/^/#/g' $jd_dir2/docker-compose.yml
-	sed -i '/127.0.0.1/ s/^/#/g' $jd_dir2/docker-compose.yml
 	fi
 }
 
@@ -245,17 +247,6 @@ d_run() {
 	chmod -R 777 $jd_dir2
 }
 
-# 外交部任务安排
-e_run() {
-    jd_dir2=$(uci_get_by_type global jd_dir)
-	if [ ! -f "/usr/share/e-wool/codes.sh" ];then
-    sed -i '/e-wool\/codes/d' /etc/crontabs/root
-	else
-    sed -i '/e-wool\/codes/d' /etc/crontabs/root
-	echo "3 2 1,10,20 * * /usr/share/e-wool/codes.sh" >>/etc/crontabs/root
-	fi
-}
-
 # 处理cookies空格
 ck_run() {
 	grep "list cookiebkye" /etc/config/e-wool >/tmp/cookies.log
@@ -268,6 +259,15 @@ ck_run() {
 	rm -rf /tmp/cookies.log
 }
 
+# 作者自定义脚本（不公开）
+diy_run() {
+	if [ ! -f "/usr/share/e-wool/diyrun.sh" ];then
+	echo "哼"
+	else
+	echo "执行自定义脚本" >>$LOG_HTM 2>&1
+	/usr/share/e-wool/diyrun.sh
+	fi
+}
 # 替换计划任务
 h_run() {
     jd_dir2=$(uci_get_by_type global jd_dir)
@@ -522,7 +522,7 @@ while getopts ":abcdsotxyzh" arg; do
         b_run
 		c_run
 		d_run
-		e_run
+		diy_run
 		h_run
 		w_run
         exit 0
@@ -533,7 +533,7 @@ while getopts ":abcdsotxyzh" arg; do
         b_run
 		c_run
 		d_run
-		e_run
+		diy_run
 		w_run
         exit 0
         ;;
@@ -554,7 +554,6 @@ while getopts ":abcdsotxyzh" arg; do
 	#定时提取互助码
     s)
 	    system_time
-        e_run
 		ck_run
 		sd_run
         exit 0

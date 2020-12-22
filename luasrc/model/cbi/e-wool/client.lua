@@ -50,34 +50,53 @@ o= s:option(DynamicList, "nc_sharecode", translate("东东农场互助码"))
 o.rmempty = false
 o.description = translate("<br/>请到脚本根目录下的: log/jd_fruit 查看日志文件,可以找到你的助力码")
 
+o = s:option(Value, "fruitsharecodes", translate("东东农场助力码"))
+o.rmempty = true
+o.description = translate("<br/>助力他人，助力码之间用 @ 隔开")
+
 o= s:option(DynamicList, "zddd_sharecode", translate("种豆得豆互助码"))
 o.rmempty = false
 o.description = translate("<br/>请到脚本根目录下的: log/jd_plantBean 查看日志文件,可以找到你的助力码")
+
+o = s:option(Value, "plant_bean_sharecodes", translate("种豆得豆助力码"))
+o.rmempty = true
+o.description = translate("<br/>助力他人，助力码之间用 @ 隔开")
 
 o= s:option(DynamicList, "pet_sharecode", translate("东东萌宠互助码"))
 o.rmempty = false
 o.description = translate("<br/>请到脚本根目录下的: log/jd_pet 查看日志文件,可以找到你的助力码")
 
+o = s:option(Value, "petsharecodes", translate("东东萌宠助力码"))
+o.rmempty = true
+o.description = translate("<br/>助力他人，助力码之间用 @ 隔开")
+
 o= s:option(DynamicList, "ddgc_sharecode", translate("东东工厂互助码"))
 o.rmempty = false
 o.description = translate("<br/>请到脚本根目录下的: log/jd_jdfactory 查看日志文件,可以找到你的助力码")
+
+o = s:option(Value, "ddfactory_sharecodes", translate("东东工厂助力码"))
+o.rmempty = true
+o.description = translate("<br/>助力他人，助力码之间用 @ 隔开")
 
 o= s:option(DynamicList, "jxgc_sharecode", translate("京喜工厂互助码"))
 o.rmempty = false
 o.description = translate("<br/>请到脚本根目录下的: log/jd_dreamFactory 查看日志文件,可以找到你的助力码")
 
+o = s:option(Value, "dream_factory_share_codes", translate("京喜工厂助力码"))
+o.rmempty = true
+o.description = translate("<br/>助力他人，助力码之间用 @ 隔开")
+
 o= s:option(DynamicList, "jdzz_sharecode", translate("京东赚赚互助码"))
 o.rmempty = false
 o.description = translate("<br/>请到脚本根目录下的: log/jd_jdzz.log 查看日志文件,可以找到你的助力码")
 
+o = s:option(Value, "jdzz_sharecodes", translate("京东赚赚助力码"))
+o.rmempty = true
+o.description = translate("<br/>助力他人，助力码之间用 @ 隔开")
+
 o= s:option(DynamicList, "diyhz", translate("定义docker-compose参数"))
 o.rmempty = false
 o.description = translate("<br/>自定义docker-compose.yml各项参数<br/>比如：<br/>MARKET_COIN_TO_BEANS=1000<br/>MARKET_COIN_TO_BEANS=抽纸<br/>能力限制，所以参数内不能出现空格和特殊字符<br/>变量合集：https://github.com/lxk0301/jd_scripts/blob/master/githubAction.md")
-
-o = s:option(Flag, "pd_zl", translate("屏蔽助力"))
-o.rmempty = false
-o.default = 0
-o.description = translate("<br/>屏蔽助力 不需要互助的 就打钩 （默认就好了，不懂别碰，影响豆子收益） ")
 
 o = s:option(Flag, "crondiy_enable", translate("覆盖模式追加自定义"))
 o.rmempty = false
