@@ -452,8 +452,8 @@ zzshare_code(){
 			zzsc="京东赚赚日志文件不存在，请检查是否已经执行过对应脚本"
 			echo "cookie$j京东赚赚好友助力码:"$zzsc >> $LOG_HTM 2>&1
 		else
-			zzsc=`sed -n '/您的京东赚赚好友助力码为.*/'p $jd_dir2/logs$j/jd_jdzz.log | sed -n '1p'`
-            zzsc=${zzsc##*您的京东赚赚好友助力码为}
+			zzsc=`sed -n '/的京东赚赚好友互助码.*/'p $jd_dir2/logs$j/jd_jdzz.log | sed -n '1p'`
+            zzsc=${zzsc##*的京东赚赚好友互助码】}
 			if test -n "$zzsc" ; then
 				for sc in $(uci_get_by_type global jdzz_sharecode); do
 					if test "$zzsc" == "$sc" ; then
