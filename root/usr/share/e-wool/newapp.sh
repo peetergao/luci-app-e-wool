@@ -285,9 +285,19 @@ sd_run() {
 	j=1
 	for ck in $(uci_get_by_type global cookiebkye); do
 		docker exec $jd_cname$j node /scripts/$sh >> $LOG_HTM 2>&1
+    cat <<-EOF > $jd_dir2/docker_crontabs/sd_run.sh
+#!/bin/sh
+node /scripts/$sh |ts >> /scripts/logs/$sh.log 2>&1
+		EOF
+	chmod 755 $jd_dir2/docker_crontabs/sd_run.sh
+    jd_cname=$(uci_get_by_type global jd_cname jd_scripts)
+	for ck in $(uci_get_by_type global cookiebkye); do
+	j=1
 		let j++
 	done
+	docker exec -i $jd_cname$j sh /etc/crontabs/sd_run.sh &
 	uci_dellist_by_type global sd_run
+	rm -rf $jd_dir2/docker_crontabs/sd_run.sh
 }
 
 #互助码提取
@@ -306,32 +316,6 @@ allshare_code(){
 		old=0
 		if test ! -f "$jd_dir2/logs$j/sharecode.log" ; then
 			echo "cookie$j未检测到互助码日志文件" >> $LOG_HTM 2>&1
-    cat <<-EOF > $jd_dir2/docker_crontabs/cx_code.sh
-#!/bin/sh
-# 东东农场
-node /scripts/jd_fruit.js |ts >> /scripts/logs/jd_fruit.log 2>&1
-# 京东种豆得豆
-node /scripts/jd_plantBean.js |ts >> /scripts/logs/jd_plantBean.log 2>&1
-# 东东萌宠
-node /scripts/jd_pet.js |ts >> /scripts/logs/jd_pet.log 2>&1
-# 东东工厂
-node /scripts/jd_jdfactory.js |ts >> /scripts/logs/jd_jdfactory.log 2>&1
-# 京喜工厂
-node /scripts/jd_dreamFactory.js |ts >> /scripts/logs/jd_dreamFactory.log 2>&1
-# 微信小程序京东赚赚
-node /scripts/jd_jdzz.js |ts >> /scripts/logs/jd_jdzz.log 2>&1
-# crazyJoy自动每日任务
-node /scripts/jd_crazy_joy.js |ts >> /scripts/logs/jd_crazy_joy.log 2>&1
-sh -x /scripts/docker/proc_file.sh
-		EOF
-    chmod 755 $jd_dir2/docker_crontabs/cx_code.sh
-	for ck in $(uci_get_by_type global cookiebkye); do
-	j=1
-	echo "开始执行任务...会很久哦...执行完毕自动提取互助码..."
-    docker exec -i $jd_cname$j sh /etc/crontabs/cx_code.sh
-        let j++
-	done
-	    /usr/share/e-wool/newapp.sh -t
 		else
 			ddsc=`sed -n '/东东工厂好友互助码】.*/'p $jd_dir2/logs$j/sharecode.log | awk '{print $1}' | sed -e 's/【京东账号.*好友互助码】//g'`
 			jxsc=`sed -n '/京喜工厂好友互助码】.*/'p $jd_dir2/logs$j/sharecode.log | awk '{print $1}' | sed -e 's/【京东账号.*好友互助码】//g'`
