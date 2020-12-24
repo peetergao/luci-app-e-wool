@@ -450,7 +450,6 @@ while getopts ":abcdsotxyzh" arg; do
 	    system_time
 	    echo "开始提取助力码" >$LOG_HTM 2>&1
 		allshare_code
-		cx_code
 		echo "助力码提取完毕" >>$LOG_HTM 2>&1
         exit 0
         ;;
