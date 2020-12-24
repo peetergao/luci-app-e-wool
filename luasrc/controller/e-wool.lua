@@ -36,6 +36,8 @@ function run()
         luci.sys.call("/usr/share/e-wool/newapp.sh -a &")
 	elseif up_code == "get_sc" then
         luci.sys.call("/usr/share/e-wool/newapp.sh -t &")
+	elseif up_code == "get_cd" then
+        luci.sys.call("/usr/share/e-wool/codes_c.sh &")
 	elseif up_code == "update_lt" then
         luci.sys.call("/usr/share/e-wool/newapp.sh -d &")
 	elseif up_code == "up_client" then

@@ -205,10 +205,6 @@ d_run() {
     echo "配置计划任务计划..." >>$LOG_HTM 2>&1
     jd_dir2=$(uci_get_by_type global jd_dir)
 	cron_model=$(uci_get_by_type global cron_model)
-    echo "开始拉取云端任务列表：crontab_list.sh..." >>$LOG_HTM 2>&1
-	cd $jd_dir2
-	curl -o crontab_list.sh https://cdn.jsdelivr.net/gh/lxk0301/jd_scripts@master/docker/crontab_list.sh >> $LOG_HTM 2>&1
-    echo "拉取完毕，开始判断任务运行模式..." >>$LOG_HTM 2>&1
 	if [ $cron_model -eq 0 ]; then
 	echo "当前模式：追加模式" >>$LOG_HTM 2>&1
 	echo "追加自定义任务列表到默认任务列表中..." >>$LOG_HTM 2>&1
@@ -240,13 +236,13 @@ d_run() {
 
 # 处理cookies空格
 ck_run() {
-	grep "list cookiebkye" /etc/config/e-wool > /tmp/cookies.log
+	grep "list cookiebkye" /etc/config/e-wool >/tmp/cookies.log
 	sed -i "s/	list cookiebkye //g" /tmp/cookies.log
 	sed -i s/[[:space:]]//g /tmp/cookies.log
-	sed -i "s/\'//g" /tmp/cookies.log
+	sed -i 's/^/	list cookiebkye &/g' /tmp/cookies.log
 	uci_dellist_by_type global cookiebkye
-	newcookies=$(cat /tmp/cookies.log)
-	uci_set_by_type global cookiebkye $newcookies
+    chmod -R 755 /etc/config/e-wool
+	cat /tmp/cookies.log >> /etc/config/e-wool
 	rm -rf /tmp/cookies.log
 }
 
@@ -266,7 +262,7 @@ h_run() {
     echo "开始拉取云端任务列表：crontab_list.sh..." >>$LOG_HTM 2>&1
 	cd $jd_dir2
 	curl -o crontab_list.sh https://cdn.jsdelivr.net/gh/lxk0301/jd_scripts@master/docker/crontab_list.sh >> $LOG_HTM 2>&1
-	echo "拉取完毕" >>$LOG_HTM 2>&1
+	echo "拉取完毕 文件存放在项目根目录 crontab_list.sh" >>$LOG_HTM 2>&1
 	echo "判断运行模式..." >>$LOG_HTM 2>&1
 	if [ $cron_model -eq 1 ]; then
 	echo "当前模式：覆盖模式" >>$LOG_HTM 2>&1
@@ -309,7 +305,33 @@ allshare_code(){
 	for ck in $(uci_get_by_type global cookiebkye); do
 		old=0
 		if test ! -f "$jd_dir2/logs$j/sharecode.log" ; then
-			echo "cookie$j未检测到互助码日志文件。" >> $LOG_HTM 2>&1
+			echo "cookie$j未检测到互助码日志文件" >> $LOG_HTM 2>&1
+    cat <<-EOF > $jd_dir2/docker_crontabs/cx_code.sh
+#!/bin/sh
+# 东东农场
+node /scripts/jd_fruit.js |ts >> /scripts/logs/jd_fruit.log 2>&1
+# 京东种豆得豆
+node /scripts/jd_plantBean.js |ts >> /scripts/logs/jd_plantBean.log 2>&1
+# 东东萌宠
+node /scripts/jd_pet.js |ts >> /scripts/logs/jd_pet.log 2>&1
+# 东东工厂
+node /scripts/jd_jdfactory.js |ts >> /scripts/logs/jd_jdfactory.log 2>&1
+# 京喜工厂
+node /scripts/jd_dreamFactory.js |ts >> /scripts/logs/jd_dreamFactory.log 2>&1
+# 微信小程序京东赚赚
+node /scripts/jd_jdzz.js |ts >> /scripts/logs/jd_jdzz.log 2>&1
+# crazyJoy自动每日任务
+node /scripts/jd_crazy_joy.js |ts >> /scripts/logs/jd_crazy_joy.log 2>&1
+sh -x /scripts/docker/proc_file.sh
+		EOF
+    chmod 755 $jd_dir2/docker_crontabs/cx_code.sh
+	for ck in $(uci_get_by_type global cookiebkye); do
+	j=1
+	echo "开始执行任务...会很久哦...执行完毕自动提取互助码..."
+    docker exec -i $jd_cname$j sh /etc/crontabs/cx_code.sh
+        let j++
+	done
+	    /usr/share/e-wool/newapp.sh -t
 		else
 			ddsc=`sed -n '/东东工厂好友互助码】.*/'p $jd_dir2/logs$j/sharecode.log | awk '{print $1}' | sed -e 's/【京东账号.*好友互助码】//g'`
 			jxsc=`sed -n '/京喜工厂好友互助码】.*/'p $jd_dir2/logs$j/sharecode.log | awk '{print $1}' | sed -e 's/【京东账号.*好友互助码】//g'`
@@ -351,7 +373,6 @@ allshare_code(){
 	done
 
 }
-
 
 # 开始运营
 w_run() {
@@ -442,8 +463,10 @@ while getopts ":abcdsotxyzh" arg; do
         ;;
 	#提取互助码
 	t)
+	    system_time
 	    echo "开始提取助力码" >$LOG_HTM 2>&1
 		allshare_code
+		cx_code
 		echo "助力码提取完毕" >>$LOG_HTM 2>&1
         exit 0
         ;;

@@ -153,11 +153,14 @@
 <div class="cbi-value-field">
 <input class="cbi-button cbi-button-reload" id="get_sc" type="button" size="0"
 		value="提取互助码">
+		<input class="cbi-button cbi-button-reload" id="get_code" type="button" size="0"
+		value="上传互助码">
 		<input class="cbi-button cbi-button-remove" id="update_client" type="button" size="0"
 		value="更新插件">
 		<br>
-		<br>提取助力码：程序初始化后请先执行相关脚本一次，再执行.
-		<br><font color="red">注：更新插件 只是个实验性功能，若使用务必挂梯子执行.</font>
+		<br>提取互助码：查询是否存在sharecode.log,无则运行一遍相关脚本并执行提取互助码,耗时较久.
+		<br><font color="red">上传互助码：QQ群友自建API，不对外公开.</font>
+		<br><font color="red">更新插件：只是个实验性功能，若使用务必挂梯子执行.</font>
 </div>
 <%+cbi/valueheader%>
 
@@ -251,6 +254,29 @@
 		});
 		return false;
 		});		
+
+	//显示并开始刷新
+	function get_code() {
+		$("body").append(modal);
+		$(".modals-bg").show();
+		setTimeout("get_realtime_log();", 500);
+	}
+	//上传互助码按钮
+	$("#get_code").click(function () {
+	var data = {
+				good: "get_cd"
+				}
+		$.ajax({
+			type: "post",
+			url: SAVE_URL,
+			//dataType : "json",
+			data : data,
+			success: function (d) {
+					get_code();
+			}
+		});
+		return false;
+		});	
 
 	//显示并开始刷新
 	function update_list() {
