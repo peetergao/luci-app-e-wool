@@ -19,7 +19,7 @@ function sync_value_to_file(value, file)
 end
 
 function view_cfg.cfgvalue()
-    return fs.readfile(jd_dir .. "/crontab_list.sh") or ""
+    return fs.readfile(jd_dir .. "/docker_crontabs/root") or ""
 end
 
 return s

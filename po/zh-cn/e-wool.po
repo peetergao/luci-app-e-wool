@@ -2,7 +2,7 @@ msgid ""
 msgstr "Content-Type: text/plain; charset=UTF-8\n"
 
 msgid "JD_ZYZL"
-msgstr "薅羊毛Docker1版"
+msgstr "薅羊毛自娱自乐版"
 
 msgid "Enable"
 msgstr "启用"
@@ -23,7 +23,7 @@ msgid "Script3"
 msgstr "容器任务列表"
 
 msgid "Base Config"
-msgstr "薅羊毛Docker1版-基本设置"
+msgstr "基本设置"
 
 msgid "Cookie Tools"
 msgstr "Cookie 工具"

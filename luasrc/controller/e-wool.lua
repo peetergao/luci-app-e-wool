@@ -11,8 +11,7 @@ function index()
     entry({"admin", "services", "e-wool", "log"},form("e-wool/log"),_("Log"), 60).leaf = true -- 日志页面
     entry({"admin", "services", "e-wool", "script"},form("e-wool/script"),_("参数配置"), 20).leaf = true -- 直接配置脚本
 	entry({"admin", "services", "e-wool", "script2"},form("e-wool/script2"),_("自定任务"), 30).leaf = true -- 直接配置脚本
-	entry({"admin", "services", "e-wool", "script3"},form("e-wool/script3"),_("云端任务"), 40).leaf = true -- 直接配置脚本
-	entry({"admin", "services", "e-wool", "script4"},form("e-wool/script4"),_("容器任务"), 50).leaf = true -- 直接配置脚本
+	entry({"admin", "services", "e-wool", "script3"},form("e-wool/script3"),_("容器任务"), 40).leaf = true -- 直接配置脚本
     entry({"admin", "services", "e-wool", "run"}, call("run")) -- 执行程序
     entry({"admin", "services", "e-wool", "update"}, call("update")) -- 执行更新
     entry({"admin", "services", "e-wool", "check_update"}, call("check_update")) -- 检查更新

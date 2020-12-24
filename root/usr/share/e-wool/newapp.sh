@@ -42,6 +42,11 @@ uci_set_by_type() {
 	uci commit $NAME
 }
 
+uci_dellist_by_type() {
+	uci delete $NAME.@$1[0].$2 2>/dev/null
+	uci commit $NAME
+}
+
 cancel() {
     if [ $# -gt 0 ]; then
         echo "$1"
@@ -65,18 +70,18 @@ run() {
 a_run() {
 	jd_dir2=$(uci_get_by_type global jd_dir)
 	if [ ! -d $jd_dir2 ]; then
-	#场地没被收购 赶紧拿下
+# 场地没被收购 赶紧拿下
     echo "创建脚本目录..." >>$LOG_HTM 2>&1
     mkdir $jd_dir2
 	chmod -R 777 $jd_dir2
     else
 	echo "停止并删除容器..." >>$LOG_HTM 2>&1
-	# 场地被卖了 管它的 抢就对了
-	# 带上家伙去他地盘
+# 场地被卖了 管它的 抢就对了
+# 带上家伙去他地盘
 	cd $jd_dir2
-	# 宰了他们主事的
+# 宰了他们主事的
 	docker-compose down >>$LOG_HTM 2>&1
-	# 火烧了他的地盘
+# 火烧了他的地盘
 	rm -rf $jd_dir2
     echo "容器已停止并删除" >>$LOG_HTM 2>&1
     fi
@@ -141,8 +146,6 @@ services:
         - JD_COOKIE=$ck
         #微信server酱通
         - PUSH_KEY=$sckey
-        #iGot推送
-        - IGOT_PUSH_KEY=$igot
         #telegram机器人通知
         - TG_BOT_TOKEN=$tg_token
         - TG_USER_ID=$tg_id
@@ -155,18 +158,6 @@ services:
         - JD_USER_AGENT=$ua
         #自定义签到延迟
         - JD_BEAN_STOP=$wait
-        #东东农场互助码
-        - FRUITSHARECODES=$(uci_get_by_type global fruitsharecodes)
-        #东东萌宠互助码
-        - PETSHARECODES=$(uci_get_by_type global petsharecodes)
-        #种豆得豆互助码
-        - PLANT_BEAN_SHARECODES=$(uci_get_by_type global plant_bean_sharecodes)
-        #东东工厂互助码
-        - DDFACTORY_SHARECODES=$(uci_get_by_type global ddfactory_sharecodes)
-        #京喜工厂互助码
-        - DREAM_FACTORY_SHARE_CODES=$(uci_get_by_type global dream_factory_share_codes)
-        #京东赚赚
-        - JDZZ_SHARECODES=$(uci_get_by_type global jdzz_sharecodes)
         #自定义参数
         #如果使用自定义定时任务,取消下面一行的注释
         - CUSTOM_LIST_FILE=my_crontab_list.sh
@@ -249,13 +240,13 @@ d_run() {
 
 # 处理cookies空格
 ck_run() {
-	grep "list cookiebkye" /etc/config/e-wool >/tmp/cookies.log
+	grep "list cookiebkye" /etc/config/e-wool > /tmp/cookies.log
 	sed -i "s/	list cookiebkye //g" /tmp/cookies.log
 	sed -i s/[[:space:]]//g /tmp/cookies.log
-	sed -i 's/^/	list cookiebkye &/g' /tmp/cookies.log
-	sed -i '/list cookiebkye/d' /etc/config/e-wool
-    chmod -R 777 /etc/config/e-wool
-	cat /tmp/cookies.log >> /etc/config/e-wool
+	sed -i "s/\'//g" /tmp/cookies.log
+	uci_dellist_by_type global cookiebkye
+	newcookies=$(cat /tmp/cookies.log)
+	uci_set_by_type global cookiebkye $newcookies
 	rm -rf /tmp/cookies.log
 }
 
@@ -290,186 +281,77 @@ h_run() {
 
 # 手动执行脚本
 sd_run() {
-    jd_dir2=$(uci_get_by_type global jd_dir)
+	jd_dir2=$(uci_get_by_type global jd_dir)
 	jd_cname=$(uci_get_by_type global jd_cname jd_scripts)
 	sh=$(uci_get_by_type global sd_run)
-    echo "开始执行任务..." >>$LOG_HTM 2>&1
-    echo "本次执行脚本：$sh" >>$LOG_HTM 2>&1
+	echo "开始执行任务..." >> $LOG_HTM 2>&1
+	echo "本次执行脚本：$sh" >> $LOG_HTM 2>&1
 	j=1
 	for ck in $(uci_get_by_type global cookiebkye); do
-	docker exec $jd_cname$j node /scripts/$sh >>$LOG_HTM 2>&1
+		docker exec $jd_cname$j node /scripts/$sh >> $LOG_HTM 2>&1
 		let j++
 	done
-	sed -i '/option sd_run/d' /etc/config/e-wool
+	uci_dellist_by_type global sd_run
 }
 
-#京喜工厂互助码提取
-jxshare_code(){
+#互助码提取
+allshare_code(){
+	#清除旧的助力码
+	uci_dellist_by_type global jxgc_sharecode
+	uci_dellist_by_type global ddgc_sharecode
+	uci_dellist_by_type global zddd_sharecode
+	uci_dellist_by_type global nc_sharecode
+	uci_dellist_by_type global pet_sharecode
+	uci_dellist_by_type global jdzzsc_sharecode
+	uci_dellist_by_type global czjsc_sharecode
 	jd_dir2=$(uci_get_by_type global jd_dir)
 	j=1
 	for ck in $(uci_get_by_type global cookiebkye); do
 		old=0
-		if test ! -f "$jd_dir2/logs$j/jd_dreamFactory.log" ; then
-			jxsc="京喜工厂日志文件不存在，请检查是否已经执行过对应脚本"
-			echo "cookie$j京喜工厂互助码:"$jxsc >> $LOG_HTM 2>&1
+		if test ! -f "$jd_dir2/logs$j/sharecode.log" ; then
+			echo "cookie$j未检测到互助码日志文件。" >> $LOG_HTM 2>&1
 		else
-			jxsc=`sed -n '/分享码:.*/'p $jd_dir2/logs$j/jd_dreamFactory.log | awk '{print $5}' | sed -n '1p'`
-			if test -n "$jxsc" ; then
-				for sc in $(uci_get_by_type global jxgc_sharecode); do
-					if test "$jxsc" == "$sc" ; then
-						old=1
-					fi
-				done
-				if test $old -eq 0 ; then
-					uci_set_by_type global jxgc_sharecode $jxsc
-				fi
-				echo "cookie$j京喜工厂互助码:"$jxsc >> $LOG_HTM 2>&1
-			fi
-		fi
-		let j++
-	done
-
-}
-#农场互助码提取
-ncshare_code(){
-	jd_dir2=$(uci_get_by_type global jd_dir)
-	j=1
-	for ck in $(uci_get_by_type global cookiebkye); do
-		old=0
-		if test ! -f "$jd_dir2/logs$j/jd_fruit.log" ; then
-			ncsc="农场日志文件不存在，请检查是否已经执行过对应脚本"
-			echo "cookie$j农场互助码:"$ncsc >> $LOG_HTM 2>&1
-		else
-			ncsc=`sed -n '/ 【您的东东农场互助码shareCode】 .*/'p $jd_dir2/logs$j/jd_fruit.log | awk '{print $5}' | sed -n '1p'`
-			if test -n "$ncsc" ; then
-				for sc in $(uci_get_by_type global nc_sharecode); do
-					if test "$ncsc" == "$sc" ; then
-						old=1
-					fi
-				done
-				if test $old -eq 0 ; then
-					uci_set_by_type global nc_sharecode $ncsc
-				fi
-				echo "cookie$j农场互助码:"$ncsc >> $LOG_HTM 2>&1
-			fi
-		fi
-		let j++
-	done
-
-}
-
-#东东工厂互助码提取
-ddshare_code(){
-	jd_dir2=$(uci_get_by_type global jd_dir)
-	j=1
-	for ck in $(uci_get_by_type global cookiebkye); do
-		old=0
-		if test ! -f "$jd_dir2/logs$j/jd_jdfactory.log" ; then
-			ddsc="东东工厂日志文件不存在，请检查是否已经执行过对应脚本"
-			echo "cookie$j东东工厂互助码:"$ddsc >> $LOG_HTM 2>&1
-		else
-			ddsc=`sed -n '/您的东东工厂好友助力邀请码：.*/'p $jd_dir2/logs$j/jd_jdfactory.log | awk '{print $4}' | sed -e 's/您的东东工厂好友助力邀请码：//g' | sed -n '1p'`
+			ddsc=`sed -n '/东东工厂好友互助码】.*/'p $jd_dir2/logs$j/sharecode.log | awk '{print $1}' | sed -e 's/【京东账号.*好友互助码】//g'`
+			jxsc=`sed -n '/京喜工厂好友互助码】.*/'p $jd_dir2/logs$j/sharecode.log | awk '{print $1}' | sed -e 's/【京东账号.*好友互助码】//g'`
+			zdsc=`sed -n '/京东种豆得豆好友互助码】.*/'p $jd_dir2/logs$j/sharecode.log | awk '{print $1}' | sed -e 's/【京东账号.*好友互助码】//g'`
+			ncsc=`sed -n '/东东农场好友互助码】.*/'p $jd_dir2/logs$j/sharecode.log | awk '{print $1}' | sed -e 's/【京东账号.*好友互助码】//g'`
+			petsc=`sed -n '/东东萌宠好友互助码】.*/'p $jd_dir2/logs$j/sharecode.log | awk '{print $1}' | sed -e 's/【京东账号.*好友互助码】//g'`
+			jdzzsc=`sed -n '/京东赚赚好友互助码】.*/'p $jd_dir2/logs$j/sharecode.log | awk '{print $1}' | sed -e 's/【京东账号.*好友互助码】//g'`
+			czjsc=`sed -n '/crazyJoy任务好友互助码】.*/'p $jd_dir2/logs$j/sharecode.log | awk '{print $1}' | sed -e 's/【京东账号.*好友互助码】//g'`
 			if test -n "$ddsc" ; then
-				for sc in $(uci_get_by_type global ddgc_sharecode); do
-					if test "$ddsc" == "$sc" ; then
-						old=1
-					fi
-				done
-				if test $old -eq 0 ; then
-					uci_set_by_type global ddgc_sharecode $ddsc
-				fi
+				uci_set_by_type global ddgc_sharecode $ddsc
 				echo "cookie$j东东工厂互助码:"$ddsc >> $LOG_HTM 2>&1
 			fi
-		fi
-		let j++
-	done
-
-}
-
-#种豆得豆互助码提取
-zdshare_code(){
-	jd_dir2=$(uci_get_by_type global jd_dir)
-	j=1
-	for ck in $(uci_get_by_type global cookiebkye); do
-		old=0
-		if test ! -f "$jd_dir2/logs$j/jd_plantBean.log" ; then
-			zdsc="种豆得豆日志文件不存在，请检查是否已经执行过对应脚本"
-			echo "cookie$j种豆得豆互助码:"$zdsc >> $LOG_HTM 2>&1
-		else
-			zdsc=`sed -n '/ 【您的京东种豆得豆互助码】 .*/'p $jd_dir2/logs$j/jd_plantBean.log | awk '{print $5}' | sed -n '1p'`
-			if test -n "$zdsc" ; then
-				for sc in $(uci_get_by_type global zddd_sharecode); do
-					if test "$zdsc" == "$sc" ; then
-						old=1
-					fi
-				done
-				if test $old -eq 0 ; then
-					uci_set_by_type global zddd_sharecode $zdsc
-				fi
-				echo "cookie$j种豆得豆互助码:"$zdsc >> $LOG_HTM 2>&1
+			if test -n "$jxsc" ; then
+				uci_set_by_type global jxgc_sharecode $jxsc
+				echo "cookie$j京喜工厂互助码:"$jxsc >> $LOG_HTM 2>&1
 			fi
-		fi
-		let j++
-	done
-
-}
-
-#东东萌宠互助码提取
-petshare_code(){
-	jd_dir2=$(uci_get_by_type global jd_dir)
-	j=1
-	for ck in $(uci_get_by_type global cookiebkye); do
-		old=0
-		if test ! -f "$jd_dir2/logs$j/jd_pet.log" ; then
-			petsc="东东萌宠日志文件不存在，请检查是否已经执行过对应脚本"
-			echo "cookie$j东东萌宠互助码:"$petsc >> $LOG_HTM 2>&1
-		else
-			petsc=`sed -n '/ 【您的东东萌宠互助码shareCode】 .*/'p $jd_dir2/logs$j/jd_pet.log | awk '{print $5}' | sed -n '1p'`
+			if test -n "$zdsc" ; then
+				uci_set_by_type global zddd_sharecode $zdsc
+				echo "cookie$j京东种豆得豆互助码:"$zdsc >> $LOG_HTM 2>&1
+			fi
+			if test -n "$ncsc" ; then
+				uci_set_by_type global nc_sharecode $ncsc
+				echo "cookie$j东东农场互助码:"$ncsc >> $LOG_HTM 2>&1
+			fi
 			if test -n "$petsc" ; then
-				for sc in $(uci_get_by_type global pet_sharecode); do
-					if test "$petsc" == "$sc" ; then
-						old=1
-					fi
-				done
-				if test $old -eq 0 ; then
-					uci_set_by_type global pet_sharecode $petsc
-				fi
+				uci_set_by_type global pet_sharecode $petsc
 				echo "cookie$j东东萌宠互助码:"$petsc >> $LOG_HTM 2>&1
 			fi
-		fi
-		let j++
-	done
-
-}
-
-#京东赚赚互助码提取
-zzshare_code(){
-	jd_dir2=$(uci_get_by_type global jd_dir)
-	j=1
-	for ck in $(uci_get_by_type global cookiebkye); do
-		old=0
-		if test ! -f "$jd_dir2/logs$j/jd_jdzz.log" ; then
-			zzsc="京东赚赚日志文件不存在，请检查是否已经执行过对应脚本"
-			echo "cookie$j京东赚赚好友助力码:"$zzsc >> $LOG_HTM 2>&1
-		else
-			zzsc=`sed -n '/的京东赚赚好友互助码.*/'p $jd_dir2/logs$j/jd_jdzz.log | sed -n '1p'`
-            zzsc=${zzsc##*的京东赚赚好友互助码】}
-			if test -n "$zzsc" ; then
-				for sc in $(uci_get_by_type global jdzz_sharecode); do
-					if test "$zzsc" == "$sc" ; then
-						old=1
-					fi
-				done
-				if test $old -eq 0 ; then
-					uci_set_by_type global jdzz_sharecode $zzsc
-				fi
-				echo "cookie$j京东赚赚好友助力码:"$zzsc >> $LOG_HTM 2>&1
+			if test -n "$jdzzsc" ; then
+				uci_set_by_type global jdzzsc_sharecode $jdzzsc
+				echo "cookie$j京东赚赚互助码:"$jdzzsc >> $LOG_HTM 2>&1
+			fi
+			if test -n "$czjsc" ; then
+				uci_set_by_type global czjsc_sharecode $czjsc
+				echo "cookie$j crazyJoy互助码:"$czjsc >> $LOG_HTM 2>&1
 			fi
 		fi
 		let j++
 	done
 
 }
+
 
 # 开始运营
 w_run() {
@@ -551,7 +433,7 @@ while getopts ":abcdsotxyzh" arg; do
 		z_run
         exit 0
         ;;
-	#定时提取互助码
+	#保存&应用
     s)
 	    system_time
 		ck_run
@@ -561,12 +443,7 @@ while getopts ":abcdsotxyzh" arg; do
 	#提取互助码
 	t)
 	    echo "开始提取助力码" >$LOG_HTM 2>&1
-		jxshare_code
-		ncshare_code
-		ddshare_code
-		zdshare_code
-		petshare_code
-		zzshare_code
+		allshare_code
 		echo "助力码提取完毕" >>$LOG_HTM 2>&1
         exit 0
         ;;
