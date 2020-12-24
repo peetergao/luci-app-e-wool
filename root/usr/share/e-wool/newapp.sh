@@ -284,18 +284,14 @@ sd_run() {
 	echo "本次执行脚本：$sh" >> $LOG_HTM 2>&1
 	j=1
 	for ck in $(uci_get_by_type global cookiebkye); do
-		docker exec $jd_cname$j node /scripts/$sh >> $LOG_HTM 2>&1
     cat <<-EOF > $jd_dir2/docker_crontabs/sd_run.sh
 #!/bin/sh
 node /scripts/$sh |ts >> /scripts/logs/$sh.log 2>&1
 		EOF
 	chmod 755 $jd_dir2/docker_crontabs/sd_run.sh
-    jd_cname=$(uci_get_by_type global jd_cname jd_scripts)
-	for ck in $(uci_get_by_type global cookiebkye); do
-	j=1
-		let j++
-	done
-	docker exec -i $jd_cname$j sh /etc/crontabs/sd_run.sh &
+	docker exec -i $jd_cname$j sh /etc/crontabs/sd_run.sh
+	let j++
+		done
 	uci_dellist_by_type global sd_run
 	rm -rf $jd_dir2/docker_crontabs/sd_run.sh
 }
