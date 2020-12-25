@@ -311,7 +311,7 @@ allshare_code(){
 	for ck in $(uci_get_by_type global cookiebkye); do
 		old=0
 		if test ! -f "$jd_dir2/logs$j/sharecode.log" ; then
-			echo "cookie$j未检测到互助码日志文件" >> $LOG_HTM 2>&1
+			echo "cookie$j未检测到互助码日志文件。" >> $LOG_HTM 2>&1
 		else
 			ddsc=`sed -n '/东东工厂好友互助码】.*/'p $jd_dir2/logs$j/sharecode.log | awk '{print $1}' | sed -e 's/【京东账号.*好友互助码】//g'`
 			jxsc=`sed -n '/京喜工厂好友互助码】.*/'p $jd_dir2/logs$j/sharecode.log | awk '{print $1}' | sed -e 's/【京东账号.*好友互助码】//g'`
@@ -353,7 +353,6 @@ allshare_code(){
 	done
 
 }
-
 # 开始运营
 w_run() {
     echo "启动容器..." >>$LOG_HTM 2>&1
