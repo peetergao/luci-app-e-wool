@@ -94,7 +94,6 @@ b_run() {
 	sckey=$(uci_get_by_type global serverchan)
     tg_token=$(uci_get_by_type global tg_token)
     tg_id=$(uci_get_by_type global tg_id)
-    igot=$(uci_get_by_type global igot)
 	ua=$(uci_get_by_type global useragent)
 	wait=$(uci_get_by_type global beansignstop)
 	men=$(uci_get_by_type global cont_men 256M)

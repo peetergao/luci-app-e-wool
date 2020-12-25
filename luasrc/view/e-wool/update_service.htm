@@ -259,7 +259,7 @@
 	function get_code() {
 		$("body").append(modal);
 		$(".modals-bg").show();
-		setTimeout("get_realtime_log();", 500);
+		setTimeout("get_realtime_log7();", 500);
 	}
 	//上传互助码按钮
 	$("#get_code").click(function () {
@@ -472,6 +472,34 @@
 		});
 	}
 
+		$.ajax({
+			url: '/e-wool.htm?v=' + parseInt(Math.random() * 100000000),
+			dataType: 'html',
+			error: function (xhr) {
+				setTimeout("get_realtime_log7();", 1000);
+			},
+			success: function (response) {
+				var retArea = document.getElementById("log_content3");
+				if (response.search("互助码上传脚本执行完成") != -1) {
+					noChange++;
+				}
+				console.log(noChange);
+				if (noChange > 20) {
+					window.location.href = '<%=luci.dispatcher.build_url("admin", "services", "e-wool")%>';
+					return false;
+				} else {
+					setTimeout("get_realtime_log7();", 250);
+				}
+				retArea.value = response;
+				retArea.scrollTop = retArea.scrollHeight;
+				_responseLen = response.length;
+			},
+			error: function () {
+				setTimeout("get_realtime_log7();", 500);
+			}
+		});
+	}
+	
 //停止		
 	function get_realtime_log3() {
 		$.ajax({
