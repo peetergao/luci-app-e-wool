@@ -286,7 +286,7 @@ sd_run() {
 	for ck in $(uci_get_by_type global cookiebkye); do
     cat <<-EOF > $jd_dir2/docker_crontabs/sd_run.sh
 #!/bin/sh
-node /scripts/$sh |ts >> /scripts/logs/$sh.log 2>&1
+node /scripts/$sh.js |ts >> /scripts/logs/$sh.log 2>&1
 		EOF
 	chmod 755 $jd_dir2/docker_crontabs/sd_run.sh
 	docker exec -i $jd_cname$j sh /etc/crontabs/sd_run.sh
@@ -307,6 +307,7 @@ allshare_code(){
 	uci_dellist_by_type global jdzzsc_sharecode
 	uci_dellist_by_type global czjsc_sharecode
 	jd_dir2=$(uci_get_by_type global jd_dir)
+	jd_cname=$(uci_get_by_type global jd_cname jd_scripts)
 	j=1
 	for ck in $(uci_get_by_type global cookiebkye); do
 		old=0
@@ -320,6 +321,9 @@ allshare_code(){
 			petsc=`sed -n '/东东萌宠好友互助码】.*/'p $jd_dir2/logs$j/sharecode.log | awk '{print $1}' | sed -e 's/【京东账号.*好友互助码】//g'`
 			jdzzsc=`sed -n '/京东赚赚好友互助码】.*/'p $jd_dir2/logs$j/sharecode.log | awk '{print $1}' | sed -e 's/【京东账号.*好友互助码】//g'`
 			czjsc=`sed -n '/crazyJoy任务好友互助码】.*/'p $jd_dir2/logs$j/sharecode.log | awk '{print $1}' | sed -e 's/【京东账号.*好友互助码】//g'`
+			#重新写入sharecode.log
+		    docker exec -i $jd_cname$j sh /scripts/docker/proc_file.sh >> $LOG_HTM 2>&1
+			#获取任务
 			if test -n "$ddsc" ; then
 				uci_set_by_type global ddgc_sharecode $ddsc
 				echo "cookie$j东东工厂互助码:"$ddsc >> $LOG_HTM 2>&1
