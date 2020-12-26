@@ -12,7 +12,12 @@ https://github.com/lxk0301/jd_scripts  套壳工具 Docker 并发版 只为了�
 
 只提供AArch64 构架lpk 因为我没有其他平台设备
 
-需要 docker-compose 支持 需要 docker-compose 支持 需要 docker-compose 支持
+# 准备环境
+
+opkg update && opkg install git git-http wget curl
+
+最重要：需要 docker-compose 支持 需要 docker-compose 支持 需要 docker-compose 支持
+
  
 ![image](https://github.com/XiaYi1002/luci-app-e-wool/blob/master/img/main.png)
 
