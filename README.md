@@ -8,9 +8,9 @@ OpenWRT 插件 魔改于jerrykuku的京东签到服务
 
 没有过多的解释
 
-https://github.com/lxk0301/jd_scripts  套壳工具 Docker 并发版 只为了方便管理
+https://github.com/lxk0301/jd_scripts  套壳工具 Docker 并发版 一个容器一个账号
 
-只提供AArch64 构架lpk 因为我没有其他平台设备
+只提供AArch64 构架lpk 不出问题的话，其他构架也可以运行的，毕竟只是调用shell干活罢了
 
 # 准备环境
 
@@ -38,7 +38,9 @@ opkg update && opkg install git git-http wget curl
 
 8、更新插件：这个最好挂梯子，更新完毕，最好重启下设备
 
-9、剩下的自行体会，插件佛系更新
+9、上传助力码：这是群友自己建的API不对外公开，所以你们忽视即可
+
+10、剩下的自行体会，插件佛系更新
  
 ![image](https://github.com/XiaYi1002/luci-app-e-wool/blob/master/img/main.png)
 
