@@ -18,6 +18,27 @@ opkg update && opkg install git git-http wget curl
 
 最重要：需要 docker-compose 支持 需要 docker-compose 支持 需要 docker-compose 支持
 
+# 使用说明
+
+0、设置项目目录（一般放在opt里面即可，但是要确保有足够的空间）
+
+1、填写cookies
+
+2、点击【初始化容器】（挂梯子以免镜像拉取失败）
+
+3、初始化完毕就可以了 脚本会根据作者设定的时间运行
+
+4、如果更新cookies 或者更新其他参数，保存后，点击 【启动/更新容器】 即可
+
+5、UA设置 不会别弄，会导致很多脚本运行出错
+
+6、互助码提取，一天活再执行，或者手动执行相关脚本然后再进行提取
+
+7、运行模式，选择【追加模式】如果不了解这方面的话，默认即可
+
+8、更新插件：这个最好挂梯子，更新完毕，最好重启下设备
+
+9、剩下的自行体会，插件佛系更新
  
 ![image](https://github.com/XiaYi1002/luci-app-e-wool/blob/master/img/main.png)
 
